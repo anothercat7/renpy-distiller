@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools>=66.1.1"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "renpy-distiller"
+description = "A tool for replacing engine files in an exported Ren'Py game"
+readme = "README.md"
+license = "GPL-3.0-or-later"
+license-files = ["COPYING"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: End Users/Desktop",
+    "Topic :: Games/Entertainment",
+    "Programming Language :: Python :: 3"
+]
+dependencies = [
+    "click>=8.5.0"
+]
+requires-python = ">=3.10"
+dynamic = ["version"]
+
+[project.scripts]
+renpy-distiller = "renpy_distiller.cli:cli"
+
+[tool.setuptools.dynamic]
+version = {attr = "renpy_distiller.__version__"}
