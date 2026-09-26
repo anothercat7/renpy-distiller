@@ -2,41 +2,53 @@
 
 Ren'Py Distiller is a library and command-line tool for replacing the
 engine files in an exported Ren'Py game with clean versions from the Ren'Py
-SDK.  Possible uses for it include:
+SDK.  This of course begs the question: why would you want to do that?
+Well, for starters, you can:
 
-- Upgrading a Ren'Py game to use a later (or earlier) version of Ren'Py
+- Upgrade a Ren'Py game to use a later (or earlier) version of Ren'Py.
 
-- Ensuring the engine code in a Ren'Py game does not have viruses or
-  malware attached to it *(note that this does not address the possibility
-  of the game script itself being infected)*
+- Ensure the engine code in a Ren'Py game does not have viruses or malware
+  attached to it.  *(Note that this does not address the possibility of the
+  game script itself being infected.)*
 
-- Undoing any alterations the game developer might have made to the Ren'Py
-  engine itself
+- Undo any alterations the game developer might have made to the Ren'Py
+  engine itself.
 
-Ren'Py Distiller is primarily intended for players of Ren'Py games, not
-developers; when developing a Ren'Py game, tasks such as upgrading the
-version of Ren'Py used in the game are much better handled by upgrading the
-Ren'Py SDK.
+You can probably think of even more uses for it if you try!  (Or maybe
+not...)
+
+Ren'Py Distiller is primarily intended for players, not developers; when
+developing a Ren'Py game, tasks such as upgrading the version of Ren'Py
+used in the game are much better handled via the normal SDK upgrade method.
 
 ## Usage
 
 In order to use Ren'Py Distiller, you need two things:
 
-- A Ren'Py game
+- A Ren'Py game (these can be found on https://itch.io and elsewhere)
 
 - A copy of the Ren'Py SDK (which can be downloaded from https://renpy.org)
 
-Ren'Py games and the Ren'Py SDK are normally distributed in archives; you
-must extract them into directories.  After extracting, run:
+Ren'Py games and the Ren'Py SDK are normally distributed in Zip files.  You
+can extract the game and SDK, or you can leave them as Zip files; Ren'Py
+Distiller can handle both.
+
+Once you have a game and a copy of the SDK, run:
 
 ```sh
-renpy-distiller --sdk path/to/sdk --output path/to/output path/to/game
+renpy-distiller game.zip -s renpy-sdk.zip -o output.zip
 ```
 
-This will copy the Ren'Py game to the specified output directory, replacing
-all of the engine files with clean versions from the SDK.  If the output
-directory does not exist, it will be created; if it already exists, it must
-be empty.
+or:
+
+```sh
+renpy-distiller game/ -s renpy-sdk/ -o output/
+```
+
+This copies the game to the specified output directory or Zip file,
+replacing all of the engine files with clean versions from the SDK.  Note
+that Ren'Py Distiller refuses to overwrite existing Zip files and nonempty
+directories.
 
 ## API
 
@@ -45,26 +57,31 @@ You can also use Ren'Py Distiller programmatically:
 ```python
 from renpy_distiller import analizer, distiller
 
-game = analizer.GameAnalizer('path/to/game')
-sdk = analizer.SDKAnalizer('path/to/sdk')
-output = analizer.OutputAnalizer('path/to/output')
+game = analizer.GameAnalizer('game.zip')
+sdk = analizer.SDKAnalizer('sdk.zip')
+output = analizer.OutputAnalizer('output.zip')
 
 distiller.Distiller(game, sdk, output).distill()
 ```
 
 ## Limitations
 
-Only Ren'Py games exported for Linux and Windows are supported; games
-exported for macOS, iOS, Android, and web platforms are not supported.
+- Only Ren'Py games exported for Linux and Windows are supported; games
+  exported for macOS, iOS, Android, and web platforms are not supported.
 
-Only Ren'Py 6.15.0 and later versions are supported; this applies both to
-the game and the SDK.
+- Only Ren'Py 6.15.0 and later versions are supported; this applies both to
+  the game and the SDK.
 
-Replacing a game's Ren'Py engine with a different version could break it;
-this is especially likely when downgrading or moving across major version
-numbers.
+- Games which depend on files outside of the `game` directory will break.
 
-Even if the exact same version of Ren'Py is used, the game could still
-break if it depends on alterations or extensions to the Ren'Py engine
-itself; Ren'Py Distiller is explicitly intended to remove such alterations
-and extensions.
+- Downgrading a game is likely to break it; upgreading a game across many
+  major versions of the SDK might break it.
+
+- If a game only supplies the script in bytecode form, it will break unless
+  you use an SDK version which is bytecode-compatible with the SDK version
+  used to export the game.
+
+## Bugs
+
+Ren'Py Distiller probably has various bugs.  Please report them if you come
+across any!

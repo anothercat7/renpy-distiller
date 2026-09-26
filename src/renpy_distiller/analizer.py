@@ -1,4 +1,6 @@
-from pathlib import Path
+import pathlib
+
+from . import files
 
 class GameAnalizer:
     """Analizer for a Ren'Py game.
@@ -14,15 +16,16 @@ class GameAnalizer:
     ]
 
     def __init__(self, path):
-        self.path = Path(path)
-        self._analize()
+        self.path = path
+        with files.reader(path) as reader:
+            self._analize(reader)
 
-    def _analize(self):
+    def _analize(self, reader):
         self.name = None
         self.valid = True
 
         for dir in ('lib', 'game', 'renpy'):
-            if not (self.path / dir).is_dir():
+            if not (reader / dir).is_dir():
                 self.valid = False
                 return
 
@@ -30,15 +33,23 @@ class GameAnalizer:
         # directory of the Ren'Py game to determine its name; these
         # executables must be consistently named.  We try to ignore
         # extraneous executables.
-        names = set()
-        for suffix in ('.exe', '.py', '.sh'):
-            match = set(file.name.removesuffix(suffix) \
-                        for file in self.path.glob('*' + suffix))
-            if match:
-                if names:
-                    names &= match
-                else:
-                    names = match
+        py = set()
+        sh = set()
+        exe = set()
+
+        for file in reader:
+            for names, suffix in ((py, '.py'), (sh, '.sh'), (exe, '.exe')):
+                if file.get_name().endswith(suffix):
+                    names.add(file.get_name().removesuffix(suffix))
+                    break
+
+        names = py | sh | exe
+        if py:
+            names &= py
+        if sh:
+            names &= sh
+        if exe:
+            names &= exe
 
         if len(names) != 1:
             self.valid = False
@@ -59,19 +70,20 @@ class SDKAnalizer:
     ]
 
     def __init__(self, path):
-        self.path = Path(path)
-        self._analize()
+        self.path = path
+        with files.reader(path) as reader:
+            self._analize(reader)
 
-    def _analize(self):
+    def _analize(self, reader):
         self.valid = True
 
         for dir in ('lib', 'renpy'):
-            if not (self.path / dir).is_dir():
+            if not (reader / dir).is_dir():
                 self.valid = False
                 return
 
         for file in ('renpy.exe', 'renpy.py', 'renpy.sh'):
-            if not (self.path / file).is_file():
+            if not (reader / file).is_file():
                 self.valid = False
                 return
 
@@ -90,22 +102,23 @@ class OutputAnalizer:
     ]
 
     def __init__(self, path):
-        self.path = Path(path)
-        self._analize()
+        self.path = path
+        self._analize(pathlib.Path(path))
 
-    def _analize(self):
+    def _analize(self, path):
         self.valid = True
         self.empty = True
 
-        if self.path.exists() and not self.path.is_dir():
-            self.valid = False
+        if path.exists():
+            if path.is_dir():
+                self.empty = not list(path.iterdir())
+            else:
+                self.empty = False
             return
 
-        if not self.path.exists():
-            for parent in self.path.parents:
-                if parent.exists() and not parent.is_dir():
-                    self.valid = False
-                    return
-
-        if self.path.exists():
-            self.empty = not list(self.path.iterdir())
+        # If the output path does not exist, the first parent which does
+        # exist needs to be a directory so we can create the path.
+        for parent in path.parents:
+            if parent.exists():
+                self.valid = parent.is_dir()
+                return

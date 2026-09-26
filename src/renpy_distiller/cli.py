@@ -1,4 +1,5 @@
 import sys
+import zipfile
 
 import click
 
@@ -7,27 +8,35 @@ from . import analizer, distiller
 @click.command()
 @click.argument(
     'game',
-    type = click.Path(exists = True, file_okay = False),
-    help = "Path to the game input directory."
+    type = click.Path(exists = True),
+    help = "Game input directory or Zip file."
 )
 @click.option(
     '-s',
     '--sdk',
-    type = click.Path(exists = True, file_okay = False),
+    type = click.Path(exists = True),
     required = True,
-    help = "Path to the Ren'Py SDK directory."
+    help = "Ren'Py SDK directory or Zip file."
 )
 @click.option(
     '-o',
     '--output',
-    type = click.Path(file_okay = False),
+    type = click.Path(),
     required = True,
-    help = "Path to the game output directory."
+    help = "Game output directory or Zip file."
 )
 @click.version_option()
 def cli(game, sdk, output):
     """Replace the engine files in an exported Ren'Py game."""
-    game = analizer.GameAnalizer(game)
+    try:
+        game = analizer.GameAnalizer(game)
+    except zipfile.BadZipFile:
+        click.echo("No valid Ren'Py game could be found in:")
+        click.echo("    " + click.format_filename(game))
+        click.echo("""\
+Ren'Py Distiller only supportes reading Ren'Py games from directories
+and Zip files.""")
+        sys.exit(1)
     if not game.valid:
         click.echo("No valid Ren'Py game could be found in:")
         click.echo("    " + click.format_filename(game.path))
@@ -37,7 +46,15 @@ and Windows using Ren'Py 6.15.0 or later; games exported with earlier
 versions may not be recognized.""")
         sys.exit(1)
 
-    sdk = analizer.SDKAnalizer(sdk)
+    try:
+        sdk = analizer.SDKAnalizer(sdk)
+    except zipfile.BadZipFile:
+        click.echo("No valid Ren'Py SDK could be found in:")
+        click.echo("    " + click.format_filename(sdk))
+        click.echo("""\
+Ren'Py Distiller only supportes reading the Ren'Py SDK from directories
+and Zip files.""")
+        sys.exit(1)
     if not sdk.valid:
         click.echo("No valid Ren'Py SDK could be found in:")
         click.echo("    " + click.format_filename(sdk.path))
@@ -48,13 +65,13 @@ SDK versions may not be recognized.""")
 
     output = analizer.OutputAnalizer(output)
     if not output.valid:
-        click.echo("No valid output directory could be created at:")
+        click.echo("No valid output path could be created at:")
         click.echo("    " + click.format_filename(output.path))
         sys.exit(1)
     if not output.empty:
-        click.echo("Files exist in the output directory at:")
+        click.echo("Files exist in the output path at:")
         click.echo("    " + click.format_filename(output.path))
-        click.echo("The output directory must be empty.")
+        click.echo("The output path must be empty.")
         sys.exit(1)
 
     click.echo("Distilling " + game.name + "...")
