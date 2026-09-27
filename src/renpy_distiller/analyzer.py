@@ -18,9 +18,9 @@ class GameAnalyzer:
     def __init__(self, path):
         self.path = path
         with files.reader(path) as reader:
-            self._analize(reader)
+            self._analyze(reader)
 
-    def _analize(self, reader):
+    def _analyze(self, reader):
         self.name = None
         self.valid = True
 
@@ -72,9 +72,9 @@ class SDKAnalyzer:
     def __init__(self, path):
         self.path = path
         with files.reader(path) as reader:
-            self._analize(reader)
+            self._analyze(reader)
 
-    def _analize(self, reader):
+    def _analyze(self, reader):
         self.valid = True
 
         for dir in ('lib', 'renpy'):
@@ -103,9 +103,9 @@ class OutputAnalyzer:
 
     def __init__(self, path):
         self.path = path
-        self._analize(pathlib.Path(path))
+        self._analyze(pathlib.Path(path))
 
-    def _analize(self, path):
+    def _analyze(self, path):
         self.valid = True
         self.empty = True
 
