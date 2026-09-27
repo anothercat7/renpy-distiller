@@ -2,10 +2,10 @@ import pathlib
 
 from . import files
 
-class GameAnalizer:
-    """Analizer for a Ren'Py game.
+class GameAnalyzer:
+    """Analyzer for a Ren'Py game.
 
-    A GameAnalizer determines whether or not a directory contains a valid
+    A GameAnalyzer determines whether or not a directory contains a valid
     Ren'Py game; it also stores some basic information about the game.
     """
 
@@ -57,10 +57,10 @@ class GameAnalizer:
 
         self.name = list(names)[0]
 
-class SDKAnalizer:
-    """Analizer for a Ren'Py SDK.
+class SDKAnalyzer:
+    """Analyzer for a Ren'Py SDK.
 
-    An SDKAnalizer determines whether or not a directory contains a valid
+    An SDKAnalyzer determines whether or not a directory contains a valid
     Ren'Py SDK; it also stores some basic information about the SDK.
     """
 
@@ -87,10 +87,10 @@ class SDKAnalizer:
                 self.valid = False
                 return
 
-class OutputAnalizer:
-    """Analizer for a potential output directory.
+class OutputAnalyzer:
+    """Analyzer for a potential output directory.
 
-    An OutputAnalizer determines whether or not an output directory is
+    An OutputAnalyzer determines whether or not an output directory is
     valid; it also extracts some basic information about the output
     directory.
     """

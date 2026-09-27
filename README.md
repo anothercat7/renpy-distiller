@@ -55,11 +55,11 @@ directories.
 You can also use Ren'Py Distiller programmatically:
 
 ```python
-from renpy_distiller import analizer, distiller
+from renpy_distiller import analyzer, distiller
 
-game = analizer.GameAnalizer('game.zip')
-sdk = analizer.SDKAnalizer('sdk.zip')
-output = analizer.OutputAnalizer('output.zip')
+game = analyzer.GameAnalyzer('game.zip')
+sdk = analyzer.SDKAnalyzer('sdk.zip')
+output = analyzer.OutputAnalyzer('output.zip')
 
 distiller.Distiller(game, sdk, output).distill()
 ```

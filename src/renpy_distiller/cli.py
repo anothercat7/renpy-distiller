@@ -3,7 +3,7 @@ import zipfile
 
 import click
 
-from . import analizer, distiller
+from . import analyzer, distiller
 
 @click.command()
 @click.argument(
@@ -29,7 +29,7 @@ from . import analizer, distiller
 def cli(game, sdk, output):
     """Replace the engine files in an exported Ren'Py game."""
     try:
-        game = analizer.GameAnalizer(game)
+        game = analyzer.GameAnalyzer(game)
     except zipfile.BadZipFile:
         click.echo("No valid Ren'Py game could be found in:")
         click.echo("    " + click.format_filename(game))
@@ -47,7 +47,7 @@ versions may not be recognized.""")
         sys.exit(1)
 
     try:
-        sdk = analizer.SDKAnalizer(sdk)
+        sdk = analyzer.SDKAnalyzer(sdk)
     except zipfile.BadZipFile:
         click.echo("No valid Ren'Py SDK could be found in:")
         click.echo("    " + click.format_filename(sdk))
@@ -63,7 +63,7 @@ Note that Ren'Py Distiller only supports Ren'Py 6.15.0 or later; earlier
 SDK versions may not be recognized.""")
         sys.exit(1)
 
-    output = analizer.OutputAnalizer(output)
+    output = analyzer.OutputAnalyzer(output)
     if not output.valid:
         click.echo("No valid output path could be created at:")
         click.echo("    " + click.format_filename(output.path))

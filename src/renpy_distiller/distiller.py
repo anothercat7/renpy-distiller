@@ -4,7 +4,7 @@ class Distiller:
     """Distiller for a Ren'Py game.
 
     A Distiller handles the process of replacing Ren'Py engine files.  It
-    uses the information in a GameAnalizer, SDKAnalizer, and OutputAnalizer
+    uses the information in a GameAnalyzer, SDKAnalyzer, and OutputAnalyzer
     to find and copy the necessary files and directories.
     """
 
