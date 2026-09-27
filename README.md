@@ -36,19 +36,21 @@ Distiller can handle both.
 Once you have a game and a copy of the SDK, run:
 
 ```sh
-renpy-distiller game.zip -s renpy-sdk.zip -o output.zip
+renpy-distiller renpy-game.zip -s renpy-sdk.zip -o output.zip
 ```
 
 or:
 
 ```sh
-renpy-distiller game/ -s renpy-sdk/ -o output/
+renpy-distiller renpy-game/ -s renpy-sdk/ -o output/
 ```
 
 This copies the game to the specified output directory or Zip file,
 replacing all of the engine files with clean versions from the SDK.  Note
 that Ren'Py Distiller refuses to overwrite existing Zip files and nonempty
 directories.
+
+See the [CLI documentation](doc/cli.md) for more information.
 
 ## API
 
@@ -57,12 +59,14 @@ You can also use Ren'Py Distiller programmatically:
 ```python
 from renpy_distiller import analyzer, distiller
 
-game = analyzer.GameAnalyzer('game.zip')
-sdk = analyzer.SDKAnalyzer('sdk.zip')
+game = analyzer.GameAnalyzer('renpy-game.zip')
+sdk = analyzer.SDKAnalyzer('renpy-sdk.zip')
 output = analyzer.OutputAnalyzer('output.zip')
 
 distiller.Distiller(game, sdk, output).distill()
 ```
+
+See the [API documentation](doc/api.md) for more information.
 
 ## Limitations
 
@@ -72,9 +76,9 @@ distiller.Distiller(game, sdk, output).distill()
 - Only Ren'Py 6.15.0 and later versions are supported; this applies both to
   the game and the SDK.
 
-- Games which depend on files outside of the `game` directory will break.
+- Games which depend on files outside of the `game/` directory will break.
 
-- Downgrading a game is likely to break it; upgreading a game across many
+- Downgrading a game is likely to break it; upgrading a game across many
   major versions of the SDK might break it.
 
 - If a game only supplies the script in bytecode form, it will break unless
