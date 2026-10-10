@@ -17,8 +17,7 @@ class GameAnalyzer:
 
     def __init__(self, path):
         self.path = path
-        with files.reader(path) as reader:
-            self._analyze(reader)
+        self._analyze(files.reader(path))
 
     def _analyze(self, reader):
         self.name = None
@@ -71,8 +70,7 @@ class SDKAnalyzer:
 
     def __init__(self, path):
         self.path = path
-        with files.reader(path) as reader:
-            self._analyze(reader)
+        self._analyze(files.reader(path))
 
     def _analyze(self, reader):
         self.valid = True
@@ -122,3 +120,22 @@ class OutputAnalyzer:
             if parent.exists():
                 self.valid = parent.is_dir()
                 return
+
+def recursively_find_game(path):
+    """Recursively find a Ren'Py game inside a given path.
+
+    If the path points to a directory or Zip file that does not contain a
+    Ren'Py game at its top level, subdirectories are searched.  Return a
+    GameAnalyzer, which may or may not be valid.
+    """
+    analyzer = GameAnalyzer(path)
+    if analyzer.valid:
+        return analyzer
+
+    for path in files.reader(path):
+        if path.is_dir():
+            sub_analyzer = recursively_find_game(path)
+            if sub_analyzer.valid:
+                return sub_analyzer
+
+    return analyzer

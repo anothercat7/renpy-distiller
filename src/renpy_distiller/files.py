@@ -7,11 +7,11 @@ class Base(abc.ABC):
     """The base class for all readers and writers."""
 
     @abc.abstractmethod
-    def __enter__(self):
+    def __repr__(self):
         pass
 
     @abc.abstractmethod
-    def __exit__(self, *args):
+    def __str__(self):
         pass
 
     @abc.abstractmethod
@@ -61,7 +61,7 @@ class BaseReader(abc.ABC):
         pass
 
 class BaseWriter(abc.ABC):
-    """A mix-in base class for readers."""
+    """A mix-in base class for writers."""
 
     @abc.abstractmethod
     def mkdir(self, mode):
@@ -81,14 +81,11 @@ class FileBase(Base):
     def __init__(self, path):
         self._path = path.removesuffix('/')
 
-    def __enter__(self):
-        return self
-
-    def __exit__(self, *args):
-        pass
-
     def __repr__(self):
         return f'{type(self).__name__}({repr(self._path)})'
+
+    def __str__(self):
+        return self._path
 
     def __truediv__(self, path):
         return type(self)(os.path.join(self._path, path))
@@ -170,15 +167,12 @@ class ZipBase(Base):
             self._path = path.removesuffix('/')
             self._zip = zip
 
-    def __enter__(self):
-        return self
-
-    def __exit__(self, *args):
-        self.close()
-
     def __repr__(self):
         path = repr(os.path.join(self._zip.filename, self._path))
         return f'{type(self).__name__}({path})'
+
+    def __str__(self):
+        return os.path.join(self._zip.filename, self._path)
 
     def __truediv__(self, path):
         return type(self)(
@@ -296,7 +290,13 @@ def copy(reader, writer):
         writer.write(reader.read(), reader.stat())
 
 def reader(path):
-    """Return a reader appropriate for the path."""
+    """Return a reader appropriate for the path.
+
+    If the path is actually a reader, return it unmodified.
+    """
+    if isinstance(path, BaseReader):
+        return path
+
     if os.path.isfile(path):
         reader = ZipReader(path)
 
@@ -311,7 +311,13 @@ def reader(path):
         return FileReader(path)
 
 def writer(path):
-    """Return a writer appropriate for the path."""
+    """Return a writer appropriate for the path.
+
+    If the path is actually a writer, return it unmodified.
+    """
+    if isinstance(path, BaseWriter):
+        return path
+
     if path.lower().endswith('.zip'):
         writer = ZipWriter(path)
 

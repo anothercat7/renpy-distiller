@@ -29,7 +29,7 @@ from . import analyzer, distiller
 def cli(game, sdk, output):
     """Replace the engine files in an exported Ren'Py game."""
     try:
-        game = analyzer.GameAnalyzer(game)
+        game = analyzer.recursively_find_game(game)
     except zipfile.BadZipFile:
         click.echo("No valid Ren'Py game could be found in:")
         click.echo("    " + click.format_filename(game))
@@ -39,7 +39,7 @@ and Zip files.""")
         sys.exit(1)
     if not game.valid:
         click.echo("No valid Ren'Py game could be found in:")
-        click.echo("    " + click.format_filename(game.path))
+        click.echo("    " + click.format_filename(str(game.path)))
         click.echo("""\
 Note that Ren'Py Distiller only supports Ren'Py games exported for Linux
 and Windows using Ren'Py 6.15.0 or later; games exported with earlier
@@ -57,7 +57,7 @@ and Zip files.""")
         sys.exit(1)
     if not sdk.valid:
         click.echo("No valid Ren'Py SDK could be found in:")
-        click.echo("    " + click.format_filename(sdk.path))
+        click.echo("    " + click.format_filename(str(sdk.path)))
         click.echo("""\
 Note that Ren'Py Distiller only supports Ren'Py 6.15.0 or later; earlier
 SDK versions may not be recognized.""")
@@ -66,11 +66,11 @@ SDK versions may not be recognized.""")
     output = analyzer.OutputAnalyzer(output)
     if not output.valid:
         click.echo("No valid output path could be created at:")
-        click.echo("    " + click.format_filename(output.path))
+        click.echo("    " + click.format_filename(str(output.path)))
         sys.exit(1)
     if not output.empty:
         click.echo("Files exist in the output path at:")
-        click.echo("    " + click.format_filename(output.path))
+        click.echo("    " + click.format_filename(str(output.path)))
         click.echo("The output path must be empty.")
         sys.exit(1)
 
@@ -79,4 +79,4 @@ SDK versions may not be recognized.""")
     distiller.Distiller(game, sdk, output).distill()
 
     click.echo("Wrote the distilled game to:")
-    click.echo("    " + click.format_filename(output.path))
+    click.echo("    " + click.format_filename(str(output.path)))

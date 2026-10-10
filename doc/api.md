@@ -50,6 +50,11 @@ file.
 `OutputAnalyzer` does not attempt to open Zip files, so it will never raise
 this exception.
 
+In addition to `GameAnalyzer`, the `analyzer` module provides the function
+`recursively_find_game`.  This function is able to find Ren'Py games even
+if they are inside nested subdirectories, whereas `GameAnalyzer` only
+checks for a Ren'Py game at the exact path given in its constructor.
+
 ### GameAnalyzer
 
 A `GameAnalyzer` analyzes a Ren'Py game and tries to determine whether or
@@ -67,8 +72,8 @@ directory of them game; these names also appear in some files in `lib/`.
 
 #### `path`
 
-The path to the game; this is the same as the path passed to the
-constructor.
+Some object of an unspecified type representing the path to the game.  To
+get a string representation of the path, pass its value to `str()`.
 
 #### `valid`
 
@@ -85,8 +90,8 @@ Construct the analyzer and analyze the SDK at the given path.
 
 #### `path`
 
-The path to the SDK; this is the same as the path passed to the
-constructor.
+Some object of an unspecified type representing the path to the SDK.  To
+get a string representation of the path, pass its value to `str()`.
 
 #### `valid`
 
@@ -108,12 +113,20 @@ not exist or points to an empty directory.
 
 #### `path`
 
-The output path; this is the same as the path passed to the constructor.
+Some object of an unspecified type representing the output path.  To get a
+string representation of the path, pass its value to `str()`.
 
 #### `valid`
 
 True if the output path seems to be valid.  This is independent of whether
 or not the path is empty.
+
+### recursively_find_game(path)
+
+Recursively search the directory or Zip file at `path` for a Ren'Py game,
+returning a `GameAnalyzer`.  Note that Zip files nested within directories
+or other Zip files are not searched.  If no valid game is found, the
+`GameAnalyzer` will have its `valid` property set to `False`.
 
 ## Distiller Module
 
