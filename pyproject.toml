@@ -21,9 +21,9 @@ requires-python = ">=3.10"
 dynamic = ["version"]
 
 [project.urls]
-homepage = "https://github.com/anothercat7/renpy-distiller"
-repository = "https://github.com/anothercat7/renpy-distiller"
-issues = "https://github.com/anothercat7/renpy-distiller/issues"
+Homepage = "https://github.com/anothercat7/renpy-distiller"
+Repository = "https://github.com/anothercat7/renpy-distiller"
+Issues = "https://github.com/anothercat7/renpy-distiller/issues"
 
 [project.scripts]
 renpy-distiller = "renpy_distiller.cli:cli"
