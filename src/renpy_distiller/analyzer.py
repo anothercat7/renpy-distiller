@@ -9,12 +9,6 @@ class GameAnalyzer:
     Ren'Py game; it also stores some basic information about the game.
     """
 
-    __slots__ = [
-        'name',
-        'path',
-        'valid'
-    ]
-
     def __init__(self, path):
         self.path = path
         self._analyze(files.reader(path))
@@ -63,11 +57,6 @@ class SDKAnalyzer:
     Ren'Py SDK; it also stores some basic information about the SDK.
     """
 
-    __slots__ = [
-        'path',
-        'valid'
-    ]
-
     def __init__(self, path):
         self.path = path
         self._analyze(files.reader(path))
@@ -92,12 +81,6 @@ class OutputAnalyzer:
     valid; it also extracts some basic information about the output
     directory.
     """
-
-    __slots__ = [
-        'empty',
-        'path',
-        'valid'
-    ]
 
     def __init__(self, path):
         self.path = path

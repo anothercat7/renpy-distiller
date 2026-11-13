@@ -8,12 +8,6 @@ class Distiller:
     to find and copy the necessary files and directories.
     """
 
-    __slots__ = [
-        '_game',
-        '_sdk',
-        '_output'
-    ]
-
     def __init__(self, game, sdk, output):
         self._game = game
         self._sdk = sdk

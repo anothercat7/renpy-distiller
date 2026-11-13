@@ -74,10 +74,6 @@ class BaseWriter(abc.ABC):
 class FileBase(Base):
     """The base class for directory readers and writers."""
 
-    __slots__ = [
-        '_path'
-    ]
-
     def __init__(self, path):
         self._path = path.removesuffix('/')
 
@@ -102,15 +98,8 @@ class FileBase(Base):
 class FileReader(FileBase, BaseReader):
     """An abstraction for reading files from a directory."""
 
-    __slots__ = []
-
     def __iter__(self):
         class FileReaderIterator:
-            __slots__ = [
-                '_names',
-                '_reader'
-            ]
-
             def __init__(self, reader):
                 self._reader = reader
                 self._names = iter(os.listdir(reader._path))
@@ -136,8 +125,6 @@ class FileReader(FileBase, BaseReader):
 class FileWriter(FileBase, BaseWriter):
     """An abstraction for writing files to a directory."""
 
-    __slots__ = []
-
     def mkdir(self, mode):
         os.makedirs(self._path, mode, True)
         os.chmod(self._path, mode)
@@ -150,12 +137,6 @@ class FileWriter(FileBase, BaseWriter):
 
 class ZipBase(Base):
     """The base class for zip file readers and writers."""
-
-    __slots__ = [
-        '_names',
-        '_path',
-        '_zip'
-    ]
 
     def __init__(self, path, mode = None, zip = None, names = None):
         if zip is None:
@@ -197,8 +178,6 @@ class ZipBase(Base):
 class ZipReader(ZipBase, BaseReader):
     """An abstraction for reading files from a Zip file."""
 
-    __slots__ = []
-
     def __init__(self, path, *args):
         super().__init__(path, 'r', *args)
 
@@ -231,11 +210,6 @@ class ZipReader(ZipBase, BaseReader):
 
     def __iter__(self):
         class ZipReaderIterator:
-            __slots__ = [
-                '_names',
-                '_reader'
-            ]
-
             def __init__(self, reader):
                 self._reader = reader
                 self._names = iter(reader._names)
@@ -265,8 +239,6 @@ class ZipReader(ZipBase, BaseReader):
 
 class ZipWriter(ZipBase, BaseWriter):
     """An abstraction for writing files to a Zip file."""
-
-    __slots__ = []
 
     def __init__(self, path, *args):
         super().__init__(path, 'w', *args)
