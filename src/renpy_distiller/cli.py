@@ -8,13 +8,13 @@ from . import analyzer, distiller
 @click.command()
 @click.argument(
     'game',
-    type = click.Path(exists = True),
+    type = click.Path(exists=True),
     help = "Game input directory or Zip file."
 )
 @click.option(
     '-s',
     '--sdk',
-    type = click.Path(exists = True),
+    type = click.Path(exists=True),
     required = True,
     help = "Ren'Py SDK directory or Zip file."
 )

@@ -138,7 +138,7 @@ class FileWriter(FileBase, BaseWriter):
 class ZipBase(Base):
     """The base class for zip file readers and writers."""
 
-    def __init__(self, path, mode = None, zip = None, names = None):
+    def __init__(self, path, mode=None, zip=None, names=None):
         if zip is None:
             self._names = None
             self._path = ''
